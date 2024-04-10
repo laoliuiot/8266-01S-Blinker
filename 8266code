@@ -1,15 +1,13 @@
-//没有上机测试，需要用的话，用arduino编写的，自己修改bug
+//已上机测试，需要用的话，自己修改bug
 #define BLINKER_WIFI
 #include <Blinker.h>
-//bug代码来自 https://github.com/laoliuiot/8266-01S-Blinker
- 
- 
-char auth[] = "2cf8ebc81dbe";      //Blinker APP中的设备Secret Key(密钥)
-char ssid[] = "ChinaNet-ggzf";        //wifi名称
-char pswd[] = "jlkjxlav";        //wifi密码
 
-const int io0 = 0;//只有这一个空闲引脚 
-const int io2 = 2;//板载灯 
+char auth[] = "2cf8ebweraddbe";      //Blinker APP中的设备Secret Key(密钥)
+char ssid[] = "ChinaNet-ggzf";        //wifi名称
+char pswd[] = "zvzxvfgg";        //wifi密码
+
+const int io0 = 0;// 
+const int io2 = 2;//板载灯 ,顺带控制
 
 BlinkerButton Button1("btn-bzled");//把手机按钮的btn-bzled 绑定到8266的Button1虚拟按钮上
 //BlinkerButton Button2("btn-ddkg");
@@ -41,14 +39,14 @@ BlinkerButton Button1(BUTTON_1, button1_callback);
             
             //https://www.w3school.com.cn/tags/html_ref_colornames.asp
             //上面是颜色表格
-            digitalWrite(io0,HIGH);
+            digitalWrite(io2,HIGH);
              Button1.color("#F08080");// 设置按键中显示的图标的颜色 
              Button1.text("led已开");// 设置按键中显示的文本 
             Button1.print("on");//   发送按键当前的状态
         
         }else  if(state=="off"){
            //  Serial.println("进入off的 if："+state);//用于调试 可以删除
-              digitalWrite(io0,LOW);
+              digitalWrite(io2,LOW);
               Button1.color("#F8F8FF");// 设置按键中显示的图标的颜色 
               Button1.text("led已关");// 设置按键中显示的文本
                Button1.print("off");//   发送按键当前的状态
@@ -88,8 +86,7 @@ void setup() {
     Button1.attach(button1_callback);//将button1_callback方法绑定到Button1上
     Blinker.attachData(dataRead);// 如果未绑定的组件被触发，则会执行其中内容
   pinMode(io2, OUTPUT);
-  pinMode(io0, OUTPUT);
-   digitalWrite(io2,LOW);//点亮板载灯 
+ 
   
   //下面这些调试用的
     
