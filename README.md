@@ -5,3 +5,5 @@ blinker-library-master.zip 是blinker库文件
 
 采用Arduion编辑器
 
+8266推动2n700控制继电器开灯。
+
