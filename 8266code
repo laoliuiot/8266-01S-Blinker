@@ -1,0 +1,108 @@
+//没有上机测试，需要用的话，用arduino编写的，自己修改bug
+#define BLINKER_WIFI
+#include <Blinker.h>
+//bug代码来自 https://github.com/laoliuiot/8266-01S-Blinker
+ 
+ 
+char auth[] = "2cf8ebc81dbe";      //Blinker APP中的设备Secret Key(密钥)
+char ssid[] = "ChinaNet-ggzf";        //wifi名称
+char pswd[] = "jlkjxlav";        //wifi密码
+
+const int io0 = 0;//只有这一个空闲引脚 
+const int io2 = 2;//板载灯 
+
+BlinkerButton Button1("btn-bzled");//把手机按钮的btn-bzled 绑定到8266的Button1虚拟按钮上
+//BlinkerButton Button2("btn-ddkg");
+  // BlinkerSlider Slider1("Slider_1");  //绑定滑动条  
+    //BlinkerRGB RGB1("RGB_1");           //绑定取色器  
+    //BlinkerNumber NUM1("NUM_1");        //绑定数字组件  
+    //BlinkerText Text1("TEXTE_1");       //绑定文字组件 
+
+void button1_callback(const String & state) {//手机操作后，8266需要执行的内容
+  
+    /*
+  在回调函数中, state 的值为:
+
+按键 : "tap"(点按); "press"(长按); "pressup "(释放)
+开关 : "on"(打开); "off"(关闭)
+自定义 : 用户设置的值
+*也可以在创建对象时注册回调函数:
+
+BlinkerButton Button1(BUTTON_1, button1_callback);
+  */
+     //BLINKER_LOG("get button state: ", state);
+   //  Serial.println("按下了btn-bzled");//用于调试 可以删除
+   //  Serial.println("传来的状态："+state);//用于调试 可以删除
+       
+       if(state=="on")
+       {
+            // Serial.println("进入on的 if："+state);//用于调试 可以删除
+            //Button1.icon("icon_1");    // 设置按键中显示的图标(icon)
+            
+            //https://www.w3school.com.cn/tags/html_ref_colornames.asp
+            //上面是颜色表格
+            digitalWrite(io0,HIGH);
+             Button1.color("#F08080");// 设置按键中显示的图标的颜色 
+             Button1.text("led已开");// 设置按键中显示的文本 
+            Button1.print("on");//   发送按键当前的状态
+        
+        }else  if(state=="off"){
+           //  Serial.println("进入off的 if："+state);//用于调试 可以删除
+              digitalWrite(io0,LOW);
+              Button1.color("#F8F8FF");// 设置按键中显示的图标的颜色 
+              Button1.text("led已关");// 设置按键中显示的文本
+               Button1.print("off");//   发送按键当前的状态
+       }
+  
+  
+  
+    // Blinker.vibrate(255);   //发送手机振动指令 ,用于玩，可以删除
+}
+
+void dataRead(const String & data)//// 如果未绑定的组件被触发，则会执行其中内容
+{
+
+    BLINKER_LOG("Blinker readString: ", data);
+     Serial.println("没有绑定这按钮");
+   // Blinker.print(key, value);
+   // Blinker.vibrate()
+}
+void heartbeat()
+{
+//设备建立连接后app会立刻发送心跳包, 此后每30s-60会发送一次心跳包
+  int io2State = digitalRead(io2);
+    if (io2State== HIGH) {  Button1.color("#F08080");// 设置按键中显示的图标的颜色 
+             Button1.text("led已开");// 设置按键中显示的文本 
+            Button1.print("on");//   发送按键当前的状态
+            }
+    else { Button1.color("#F8F8FF");// 设置按键中显示的图标的颜色 
+              Button1.text("led已关");// 设置按键中显示的文本
+               Button1.print("off");//   发送按键当前的状态
+               }
+
+}
+
+void setup() {
+  //  Serial.begin(9600);
+    Blinker.begin(auth, ssid, pswd);  //WiFi接入
+    Button1.attach(button1_callback);//将button1_callback方法绑定到Button1上
+    Blinker.attachData(dataRead);// 如果未绑定的组件被触发，则会执行其中内容
+  pinMode(io2, OUTPUT);
+  pinMode(io0, OUTPUT);
+   digitalWrite(io2,LOW);//点亮板载灯 
+  
+  //下面这些调试用的
+    
+    //  digitalWrite(D4,LOW);//先把等打开好调试
+    // BLINKER_DEBUG.stream(Serial);//开启调试信息用于指定调试信息输出的串口，
+    //设备开发时调试使用，项目或产品成型后，可以删除不用
+ //     Serial.println("设置完成");
+  
+
+}
+
+
+void loop() {
+  Blinker.run();
+
+}
